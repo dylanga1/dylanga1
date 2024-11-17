@@ -1,0 +1,139 @@
+Proceso ArbolOpticaVector
+    // Declaración de Variables
+    Definir vector[255] Como Caracter
+    Definir opcion, n, posActual Como Entero
+    Definir letra, orden Como Caracter
+
+    // Inicialización
+    posActual <- 1
+    Para i <- 1 Hasta 255 Hacer
+        vector[i] <- ""
+    Fin Para
+
+    // Menú
+    Mientras Verdadero Hacer
+        Escribir "=== MENÚ ==="
+        Escribir "1. Captura de Letras"
+        Escribir "2. Recorrer el Árbol"
+        Escribir "3. Mostrar Árbol de Letras"
+        Escribir "4. Buscar Letra"
+        Escribir "5. Salir"
+        Leer opcion
+        
+        Segun opcion Hacer
+            Caso 1:
+                CapturarLetras(vector)
+            Caso 2:
+                Escribir "Seleccione el tipo de recorrido (I: Inorder, P: Preorder, S: Postorder):"
+                Leer orden
+                Escribir "Recorrido del árbol:"
+                RecorrerArbol(vector, 1, orden)
+            Caso 3:
+                MostrarArbol(vector, 1, 0)
+            Caso 4:
+                Escribir "Ingrese la letra a buscar:"
+                Leer letra
+                Si BuscarEnArbol(vector, letra, 1) Entonces
+                    Escribir "La letra ", letra, " está en el árbol."
+                SiNo
+                    Escribir "La letra no existe en el árbol."
+                Fin Si
+            Caso 5:
+                Escribir "Saliendo del programa."
+                FinMientras
+            De Otro Modo:
+                Escribir "Opción inválida."
+        Fin Segun
+    Fin Mientras
+Fin Proceso
+
+// Subproceso para capturar letras
+Subproceso CapturarLetras(vector Por Referencia)
+    Definir n, i Como Entero
+    Definir letra Como Caracter
+    Escribir "¿Cuántas letras desea capturar? (mínimo 10):"
+    Leer n
+    Si n < 10 Entonces
+        n <- 10
+    Fin Si
+    Para i <- 1 Hasta n Hacer
+        Escribir "Ingrese una letra:"
+        Leer letra
+        Si BuscarEnArbol(vector, letra, 1) Entonces
+            Escribir "La letra ya existe en el árbol."
+        SiNo
+            AgregarLetra(vector, letra, 1)
+            Escribir "Letra agregada con éxito."
+        Fin Si
+    Fin Para
+Fin Subproceso
+
+// Subproceso para agregar letras al árbol
+Subproceso AgregarLetra(vector Por Referencia, letra, posActual)
+    Si vector[posActual] = "" Entonces
+        vector[posActual] <- letra
+    SiNo
+        Si letra < vector[posActual] Entonces
+            AgregarLetra(vector, letra, 2 * posActual)
+        SiNo
+            AgregarLetra(vector, letra, 2 * posActual + 1)
+        Fin Si
+    Fin Si
+Fin Subproceso
+
+// Subproceso para recorrer el árbol
+Subproceso RecorrerArbol(vector, pos, orden)
+    Si pos <= 255 Y vector[pos] <> "" Entonces
+        Si orden = "I" Entonces
+            RecorrerArbol(vector, 2 * pos, orden)
+            Escribir vector[pos], " (", pos, ")"
+            RecorrerArbol(vector, 2 * pos + 1, orden)
+        Fin Si
+        Si orden = "P" Entonces
+            Escribir vector[pos], " (", pos, ")"
+            RecorrerArbol(vector, 2 * pos, orden)
+            RecorrerArbol(vector, 2 * pos + 1, orden)
+        Fin Si
+        Si orden = "S" Entonces
+            RecorrerArbol(vector, 2 * pos, orden)
+            RecorrerArbol(vector, 2 * pos + 1, orden)
+            Escribir vector[pos], " (", pos, ")"
+        Fin Si
+    Fin Si
+Fin Subproceso
+
+// Subproceso para mostrar el árbol como una estructura jerárquica
+Subproceso MostrarArbol(vector, pos, nivel)
+    Si pos <= 255 Y vector[pos] <> "" Entonces
+        MostrarArbol(vector, 2 * pos + 1, nivel + 1)
+        Escribir Espacios(nivel * 4), vector[pos]
+        MostrarArbol(vector, 2 * pos, nivel + 1)
+    Fin Si
+Fin Subproceso
+
+// Subproceso para buscar una letra en el árbol
+Funcion BuscarEnArbol(vector, letra, pos) Como Logico
+    Si pos > 255 O vector[pos] = "" Entonces
+        Retornar Falso
+    SiNo
+        Si vector[pos] = letra Entonces
+            Retornar Verdadero
+        SiNo
+            Si letra < vector[pos] Entonces
+                Retornar BuscarEnArbol(vector, letra, 2 * pos)
+            SiNo
+                Retornar BuscarEnArbol(vector, letra, 2 * pos + 1)
+            Fin Si
+        Fin Si
+    Fin Si
+Fin Funcion
+
+// Subproceso auxiliar para generar espacios
+Funcion Espacios(cantidad Como Entero) Como Caracter
+    Definir resultado Como Caracter
+    resultado <- ""
+    Para i <- 1 Hasta cantidad Hacer
+        resultado <- resultado + " "
+    Fin Para
+    Retornar resultado
+Fin Funcion
